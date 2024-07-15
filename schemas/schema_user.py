@@ -15,3 +15,7 @@ class UserPublicSchema(BaseModel):
 
 class DbMockSchema(UserSchema):
     id: int
+
+
+class UserList(BaseModel):
+    users: list[UserPublicSchema]
