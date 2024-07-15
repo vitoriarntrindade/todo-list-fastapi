@@ -1,15 +1,5 @@
 from http import HTTPStatus
 
-import pytest
-from fastapi.testclient import TestClient
-
-from fast_course.app import app
-
-
-@pytest.fixture
-def client():
-    return TestClient(app)
-
 
 def test_root_should_returns_ok(client):
     response = client.get('/')
