@@ -46,4 +46,3 @@ def update_user(user_id: int, user: UserSchema):
     database_mock[user_id - 1] = user_with_id
 
     return user_with_id
-

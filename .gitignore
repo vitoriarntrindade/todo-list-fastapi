@@ -59,7 +59,7 @@ docker-compose*.yml
 # MySQL
 *.sql
 *.sqlite3
-
+database.db
 
 # Django stuff:
 *.migrations/
