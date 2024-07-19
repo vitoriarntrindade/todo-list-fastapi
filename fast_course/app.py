@@ -1,17 +1,16 @@
 from http import HTTPStatus
 
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
+from sqlalchemy import select
 
+from models.user import User
 from schemas.schema_user import (
-    DbMockSchema,
-    UserList,
     UserPublicSchema,
     UserSchema,
 )
+from settings.database import get_session
 
 app = FastAPI()
-
-database_mock = []
 
 
 @app.get('/', status_code=HTTPStatus.OK)
@@ -22,27 +21,33 @@ def read_root():
 @app.post(
     '/users/', response_model=UserPublicSchema, status_code=HTTPStatus.CREATED
 )
-def create_user(user: UserSchema):
-    user_with_id = DbMockSchema(id=len(database_mock) + 1, **user.model_dump())
+def create_user(user: UserSchema, session=Depends(get_session)):
+    db_user = session.scalar(
+        select(User).where(
+            (User.username == user.username) | (User.email == user.email)
+        )
+    )
 
-    database_mock.append(user_with_id)
-    return user_with_id
+    if db_user:
+        if user.username == db_user.username:
+            raise HTTPException(
+                status_code=HTTPStatus.BAD_REQUEST,
+                detail='Username already exists',
+            )
+
+        elif user.email == db_user.email:
+            raise HTTPException(
+                status_code=HTTPStatus.BAD_REQUEST,
+                detail='Email already exists',
+            )
+
+    db_user = User(
+        username=user.username, password=user.password, email=user.email
+    )
+    session.add(db_user)
+    session.commit()
+    session.refresh(db_user)
+
+    return db_user
 
 
-@app.get('/users/', response_model=UserList, status_code=HTTPStatus.OK)
-def read_users():
-    return {'users': database_mock}
-
-
-@app.put(
-    '/users/{user_id}',
-    response_model=UserPublicSchema,
-    status_code=HTTPStatus.OK,
-)
-def update_user(user_id: int, user: UserSchema):
-    user_with_id = DbMockSchema(**user.model_dump(), id=user_id)
-    if not user_with_id:
-        raise HTTPException(status_code=404, detail='User not found')
-    database_mock[user_id - 1] = user_with_id
-
-    return user_with_id
