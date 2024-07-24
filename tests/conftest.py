@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.pool import StaticPool
 
 from fast_course.app import app
-from models.user import table_registry
+from models.user import User, table_registry
 from settings.database import get_session
 
 
@@ -34,3 +34,13 @@ def session():
         yield session
 
     table_registry.metadata.drop_all(engine)
+
+
+@pytest.fixture
+def user(session):
+    user = User(username='Teste', email='teste@teste.com', password='teste123')
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+
+    return user
