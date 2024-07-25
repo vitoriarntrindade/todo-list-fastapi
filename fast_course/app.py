@@ -60,25 +60,48 @@ def read_users(limit: int = 10, session: Session = Depends(get_session)):
     return {'users': user}
 
 
-@app.put('/users/{user_id}', response_model=UserPublicSchema, status_code=HTTPStatus.OK)
-def update_user(user_id: int, user: User, session: Session = Depends(get_session)):
-    user = session.scalar(select(user).where(User.id == user_id))
+@app.put(
+    '/users/{user_id}',
+    response_model=UserPublicSchema,
+    status_code=HTTPStatus.OK,
+)
+def update_user(
+    user_id: int, user: UserSchema, session: Session = Depends(get_session)
+):
+    user_db = session.scalar(select(User).where(User.id == user_id))
 
     if not user:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
-            detail=f'User id {user_id} not found'
+            detail=f'User id {user_id} not found',
         )
 
+    user_db.email = user.email
+    user_db.username = user.username
+    user_db.password = user.password
 
-@app.delete('/users/{user_id}', response_model=UserPublicSchema, status_code=HTTPStatus.OK)
-def delete_user(user_id: int, user: User, session: Session = Depends(get_session())):
-    user = session.scalar(select(user).where(User.id == user_id))
+    session.add(user_db)
+    session.commit()
+    session.refresh(user_db)
+
+    return user_db
+
+
+@app.delete(
+    '/users/{user_id}',
+    status_code=HTTPStatus.OK,
+)
+def delete_user(user_id: int, session: Session = Depends(get_session)):
+    user = session.scalar(select(User).where(User.id == user_id))
 
     if not user:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
-            detail=f'User id {user_id} not found'
+            detail=f'User id {user_id} not found',
         )
 
+    session.delete(user)
+    session.add(user)
+    session.commit()
 
+    return {'message': 'User deleted'}

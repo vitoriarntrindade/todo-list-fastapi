@@ -1,5 +1,7 @@
 from http import HTTPStatus
 
+from schemas.schema_user import UserPublicSchema
+
 
 def test_root_should_returns_ok(client):
     response = client.get('/')
@@ -13,17 +15,14 @@ def test_create_user(client):
         '/users',
         json={
             'username': 'vitoria',
-            'email': 'vitoria@gmail.com',
-            'password': '132@@JHKJ',
+            'email': 'vitoria@example.com',
+            'password': 'senha123',
         },
     )
-
-    # Validando se o status_code está correto
     assert response.status_code == HTTPStatus.CREATED
-    # Validando UserPublicSchema
     assert response.json() == {
         'username': 'vitoria',
-        'email': 'vitoria@gmail.com',
+        'email': 'vitoria@example.com',
         'id': 1,
     }
 
@@ -32,25 +31,23 @@ def test_read_users(client):
     response = client.get('/users/')
 
     assert response.status_code == HTTPStatus.OK
-    assert response.json() == {
-        'users': [
-            {
-                'username': 'vitoria',
-                'email': 'vitoria@gmail.com',
-                'id': 1,
-            }
-        ]
-    }
+    assert response.json() == {'users': []}
 
 
-def test_update_users(client):
+def test_read_users_with_users(client, user):
+    user_schema = UserPublicSchema.model_validate(user).model_dump()
+    response = client.get('/users/')
+
+    assert response.json() == {'users': [user_schema]}
+
+
+def test_update_users(client, user):
     response = client.put(
         '/users/1',
         json={
             'password': '1235',
             'username': 'maria juliana',
             'email': 'teste@teste.com',
-            'id': 1,
         },
     )
 
@@ -59,3 +56,9 @@ def test_update_users(client):
         'email': 'teste@teste.com',
         'id': 1,
     }
+
+
+def test_delete_user(client, user):
+    response = client.delete('/users/1')
+
+    assert response.json() == {'message': 'User deleted'}
