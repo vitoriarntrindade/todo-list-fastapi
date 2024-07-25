@@ -62,3 +62,17 @@ def test_delete_user(client, user):
     response = client.delete('/users/1')
 
     assert response.json() == {'message': 'User deleted'}
+
+
+def test_create_user_username_duplicated_returns_400(client, user):
+    response = client.post(
+        '/users',
+        json={
+            'username': 'Teste',
+            'email': 'teste@teste.com',
+            'password': 'senha123',
+        },
+    )
+
+    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert response.json() == {'detail': 'Username already exists'}
