@@ -6,6 +6,7 @@ from sqlalchemy.pool import StaticPool
 
 from fast_course.app import app
 from models.user import User, table_registry
+from security import get_password_hash
 from settings.database import get_session
 
 
@@ -38,9 +39,16 @@ def session():
 
 @pytest.fixture
 def user(session):
-    user = User(username='Teste', email='teste@teste.com', password='teste123')
+    pwd = 'test123'
+
+    user = User(
+        username='Teste',
+        email='teste@test.com',
+        password=get_password_hash(pwd),
+    )
     session.add(user)
     session.commit()
     session.refresh(user)
 
+    user.clean_password = pwd
     return user
