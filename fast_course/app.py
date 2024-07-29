@@ -7,7 +7,12 @@ from sqlalchemy.orm import Session
 
 from models.user import User
 from schemas.schema_user import UserList, UserPublicSchema, UserSchema
-from security import create_access_token, get_password_hash, verify_password
+from security import (
+    create_access_token,
+    get_current_user,
+    get_password_hash,
+    verify_password,
+)
 from settings.database import get_session
 
 app = FastAPI()
@@ -72,7 +77,10 @@ def login_for_access_token(
 
 
 @app.get('/users/', response_model=UserList)
-def read_users(limit: int = 10, session: Session = Depends(get_session)):
+def read_users(
+    limit: int = 10,
+    session: Session = Depends(get_session),
+):
     user = session.scalars(select(User))
 
     return {'users': user}
@@ -84,42 +92,39 @@ def read_users(limit: int = 10, session: Session = Depends(get_session)):
     status_code=HTTPStatus.OK,
 )
 def update_user(
-    user_id: int, user: UserSchema, session: Session = Depends(get_session)
+    user_id: int,
+    user: UserSchema,
+    session: Session = Depends(get_session),
+    current_user=Depends(get_current_user),
 ):
-    user_db = session.scalar(select(User).where(User.id == user_id))
+    if current_user.id != user_id:
+        raise HTTPException(status_code=400, detail='Not enought permissions')
 
-    if not user:
-        raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND,
-            detail=f'User id {user_id} not found',
-        )
+    current_user.email = user.email
+    current_user.username = user.username
+    current_user.password = get_password_hash(user.password)
 
-    user_db.email = user.email
-    user_db.username = user.username
-    user_db.password = get_password_hash(user.password)
-
-    session.add(user_db)
+    session.add(current_user)
     session.commit()
-    session.refresh(user_db)
+    session.refresh(current_user)
 
-    return user_db
+    return current_user
 
 
 @app.delete(
     '/users/{user_id}',
     status_code=HTTPStatus.OK,
 )
-def delete_user(user_id: int, session: Session = Depends(get_session)):
-    user = session.scalar(select(User).where(User.id == user_id))
+def delete_user(
+    user_id: int,
+    session: Session = Depends(get_session),
+    current_user=Depends(get_current_user),
+):
+    if current_user.id != user_id:
+        raise HTTPException(status_code=400, detail='Not enought permissions')
 
-    if not user:
-        raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND,
-            detail=f'User id {user_id} not found',
-        )
-
-    session.delete(user)
-    session.add(user)
+    session.delete(current_user)
+    session.add(current_user)
     session.commit()
 
     return {'message': 'User deleted'}
