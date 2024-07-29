@@ -12,13 +12,10 @@ from zoneinfo import ZoneInfo
 
 from models.user import User
 from settings.database import get_session
+from settings.settings import Settings
 
 pwd_context = PasswordHash.recommended()
-oauth2_schema = OAuth2PasswordBearer(tokenUrl='token')
-
-SECRET_KEY = 'testsecretkey'
-ALGORITHM = 'HS256'
-ACCESS_TOKEN_EXPIRES_MINUTES = 30
+oauth2_schema = OAuth2PasswordBearer(tokenUrl='auth/token')
 
 
 def get_password_hash(password: str):
@@ -33,12 +30,14 @@ def create_access_token(data_payload: dict):
     to_encode = data_payload.copy()
 
     expire = datetime.now(tz=ZoneInfo('UTC')) + timedelta(
-        minutes=ACCESS_TOKEN_EXPIRES_MINUTES
+        minutes=Settings().ACCESS_TOKEN_EXPIRES_MINUTES
     )
 
     to_encode.update({'exp': expire})
 
-    enconded_jwt = encode(to_encode, key=SECRET_KEY, algorithm=ALGORITHM)
+    enconded_jwt = encode(
+        to_encode, key=Settings().SECRET_KEY, algorithm=Settings().ALGORITHM
+    )
 
     return enconded_jwt
 
@@ -53,7 +52,7 @@ def get_current_user(
         headers={'WWW-Authenticate': 'Bearer'},
     )
     try:
-        payload = decode(token, SECRET_KEY, ALGORITHM)
+        payload = decode(token, Settings().SECRET_KEY, Settings().ALGORITHM)
         username: str = payload.get('sub')
 
         if not username:

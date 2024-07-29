@@ -1,13 +1,14 @@
 from jwt import decode
 
-from security import ALGORITHM, SECRET_KEY, create_access_token
+from security import create_access_token
+from settings.settings import Settings
 
 
 def test_jwt():
     data = {'test': 'test'}
     token = create_access_token(data)
 
-    decoded = decode(token, SECRET_KEY, ALGORITHM)
+    decoded = decode(token, Settings().SECRET_KEY, Settings().ALGORITHM)
 
     assert decoded['test'] == data['test']
     assert decoded['exp']
