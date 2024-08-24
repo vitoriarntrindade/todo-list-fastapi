@@ -14,9 +14,5 @@ class UserPublicSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class DbMockSchema(UserSchema):
-    id: int
-
-
 class UserList(BaseModel):
     users: list[UserPublicSchema]

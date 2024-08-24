@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from models.todo_state import TodoState
 from tests.conftest import TodoFactory
 
@@ -95,3 +97,72 @@ def test_list_todos_filter_state_should_return_6(session, token, user, client):
     )
 
     assert len(response.json()['todos']) == expected_todos
+
+
+def test_list_todos_filter_combined_should_return_5_todos(
+    session, user, client, token
+):
+    expected_todos = 5
+    session.bulk_save_objects(
+        TodoFactory.create_batch(
+            5,
+            user_id=user.id,
+            title='Test todo combined',
+            description='combined description',
+            state=TodoState.done,
+        )
+    )
+
+    session.bulk_save_objects(
+        TodoFactory.create_batch(
+            3,
+            user_id=user.id,
+            title='Other title',
+            description='other description',
+            state=TodoState.todo,
+        )
+    )
+    session.commit()
+
+    response = client.get(
+        '/todos/?title=Test todo combined&description=combined&state=done',
+        headers={'Authorization': f'Bearer {token}'},
+    )
+
+    assert len(response.json()['todos']) == expected_todos
+
+
+def test_delete_todo(session, client, token, user):
+    todo = TodoFactory(user_id=user.id)
+    session.add(todo)
+    session.commit()
+
+    response = client.delete(
+        f'todos/{todo.id}', headers={'Authorization': f'Bearer {token}'}
+    )
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {'message': 'Task has been deleted successfully'}
+
+
+def test_delete_return_error(client, token):
+    response = client.delete(
+        f'/todos/{10}', headers={'Authorization': f'Bearer {token}'}
+    )
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+
+
+def test_patch_todo(client, token, session, user):
+    todo = TodoFactory(user_id=user.id)
+
+    session.add(todo)
+    session.commit()
+
+    response = client.patch(
+        f'/todos/{todo.id}',
+        json={'title': 'teste!'},
+        headers={'Authorization': f'Bearer {token}'},
+    )
+
+    assert response.status_code == HTTPStatus.OK
