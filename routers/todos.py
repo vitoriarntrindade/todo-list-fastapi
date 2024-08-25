@@ -58,7 +58,7 @@ def list_todos(
         query = query.filter(Todo.description.contains(description))
 
     if state:
-        query = query.filter(Todo.state.contains(state))
+        query = query.filter(Todo.state == state)
 
     todos = session.scalars(query.offset(offset).limit(limit)).all()
 
@@ -66,7 +66,7 @@ def list_todos(
 
 
 @router.delete('/{todo_id}', response_model=Message)
-def delete_todo(todo_id, session: Session, user: User):
+def delete_todo(todo_id: int, session: Session, user: User):
     todo = session.scalar(
         select(Todo).where(Todo.user_id == user.id, Todo.id == todo_id)
     )
@@ -104,9 +104,10 @@ def patch_todo(todo_id: int, session: Session, user: User, todo: TodoUpdate):
     return db_todo
 
 
-def test_patch_error(client, token):
-    response = client.patch(
-        '/todos/10', json={}, headers={'Authorization': f'Bearer {token}'}
-    )
-
-    assert response.status_code == HTTPStatus.NOT_FOUND
+#
+# def test_patch_error(client, token):
+#     response = client.patch(
+#         '/todos/10', json={}, headers={'Authorization': f'Bearer {token}'}
+#     )
+#
+#     assert response.status_code == HTTPStatus.NOT_FOUND
