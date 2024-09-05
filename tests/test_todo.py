@@ -83,20 +83,20 @@ def test_list_todos_filter_description_should_return_6(
     assert len(response.json()['todos']) == expected_todos
 
 
-# def test_list_todos_filter_state_should_return_6(session, token, user, client):
-#     expected_todos = 6
-#
-#     session.bulk_save_objects(
-#         TodoFactory.create_batch(6, user_id=user.id, state='done')
-#     )
-#     session.commit()
-#
-#     response = client.get(
-#         '/todos/?state=done',
-#         headers={'Authorization': f'Bearer {token}'},
-#     )
-#
-#     assert len(response.json()['todos']) == expected_todos
+def test_list_todos_filter_state_should_return_6(session, token, user, client):
+    expected_todos = 6
+
+    session.bulk_save_objects(
+        TodoFactory.create_batch(6, user_id=user.id, state='done')
+    )
+    session.commit()
+
+    response = client.get(
+        '/todos/?state=done',
+        headers={'Authorization': f'Bearer {token}'},
+    )
+
+    assert len(response.json()['todos']) == expected_todos
 
 
 def test_list_todos_filter_combined_should_return_5_todos(

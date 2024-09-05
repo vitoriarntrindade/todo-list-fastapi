@@ -18,7 +18,7 @@ class UserFactory(factory.Factory):
 
     username = factory.Sequence(lambda n: f'test{n}')
     email = factory.LazyAttribute(lambda obj: f'{obj.username}@test.com')
-    password = factory.LazyAttribute(lambda obj: f'{obj.username}senhardm')
+    password = factory.LazyAttribute(lambda obj: f'{obj.username}senha')
 
 
 class TodoFactory(factory.Factory):
