@@ -20,5 +20,12 @@ jobs:
       - name: Instalar dependências
         run: poetry install
 
+      - name: Definir variáveis de ambiente a partir dos segredos
+        run: |
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> $GITHUB_ENV
+          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> $GITHUB_ENV
+          echo "ALGORITHM=${{ secrets.ALGORITHM }}" >> $GITHUB_ENV
+          echo "ACCESS_TOKEN_EXPIRES_MINUTES=${{ secrets.ACCESS_TOKEN_EXPIRES_MINUTES }}" >> $GITHUB_ENV
+
       - name: Executar testes
         run: poetry run task test
