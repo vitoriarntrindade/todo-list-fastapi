@@ -1,4 +1,4 @@
-# 🚀 Trilha de FastAPI - Eduardo Mendes
+# 🚀 Trilha de FastAPI - Eduardo Mendes - ToDo List
 
 
 ### 🛠️ Configurações do  Ambiente de Desenvolvimento para o projeto:
