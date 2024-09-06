@@ -1,59 +1,58 @@
-# 🚀 Curso de FastAPI
+# 🚀 Trilha de FastAPI - Eduardo Mendes
 
-## 👩‍💻 Sobre a Aluna
 
-Eu sou uma aluna dedicada a melhorar minhas habilidades em FastAPI. Este curso foi desenvolvido pelo talentoso **Eduardo Mendes**, e eu vou commitar a cada etapa de evolução no curso para compartilhar meu progresso
-e manter um histórico claro das melhorias.
+### 🛠️ Configurações do  Ambiente de Desenvolvimento para o projeto:
 
-## Aqui está um resumo do conteúdo do projeto:
+A configuração do ambiente é feita utilizando o **Poetry** para o gerenciamento de dependências. Para auxiliar na formatação e padronização do código, são utilizados **linters** como o **Ruff** e **Taskipy** para a execução automatizada de tarefas.
 
-## 🛠️ Configurando um Ambiente de Desenvolvimento para FastAPI
+### 📦 Dependências
 
-Começaremos do absoluto zero, criando e configurando nosso ambiente de desenvolvimento.
+- **Poetry**: Gerenciamento de dependências
+- **Taskipy**: Automação de tarefas
+- **Ruff**: Linter para garantir a qualidade e consistência do código
 
-- Instalação do Python
-- Configuração do Virtualenv
-- Instalação do FastAPI 
+## 🧪 Testes e Desenvolvimento
 
-## 🏁 Primeiros Passos com FastAPI e TDD
+O desenvolvimento da aplicação seguiu a metodologia **TDD** (Desenvolvimento Orientado a Testes) e a cobertura de testes foi garantida com as seguintes bibliotecas:
 
-Após configurar o ambiente, mergulharemos na estrutura básica de um projeto FastAPI e faremos uma introdução detalhada ao Test Driven Development (TDD).
+- **Pytest**: Testes unitários
+- **pytest-cov**: Cobertura de testes
+- **Factory Boy**: Criação de objetos de teste
+- **Freezegun**: Mock de datas
+- **Testcontainers**: Criação de containers para testes de integração
 
-- Criando sua primeira rota FastAPI
-- Entendendo o TDD
-- Escrevendo testes básicos com pytest
 
-## 📊 Modelagem de Dados com Pydantic e SQLAlchemy
+## 🏗️ Modelagem e Banco de Dados
 
-Aprenderemos a criar e manipular modelos de dados utilizando Pydantic e SQLAlchemy, dois recursos que levam a eficiência do FastAPI a outro nível.
+A modelagem de dados foi realizada utilizando **Pydantic** e **SQLAlchemy** para garantir a validação e o gerenciamento eficaz dos dados. A migração do banco de dados foi feita com **Alembic** e o banco de dados utilizado é o **PostgreSQL**.
 
-- Definindo modelos de dados com Pydantic
-- Configurando o SQLAlchemy
-- Realizando operações CRUD
+### 🛠️ Tecnologias Utilizadas:
 
-## 🔐 Autenticação e Autorização em FastAPI
+- **Pydantic**: Validação de dados
+- **SQLAlchemy**: ORM para interação com o banco de dados
+- **Alembic**: Ferramenta para migração de dados
+- **PostgreSQL**: Banco de dados relacional
 
-Construiremos um sistema de autenticação completo, para proteger nossas rotas e garantir que apenas usuários autenticados tenham acesso a certos dados.
+## 🔐 Autenticação e Autorização com JWT
+
+A aplicação implementa autenticação utilizando **OAuth2** com tokens **JWT**, garantindo uma abordagem segura para a autenticação de usuários.
 
 - Implementando autenticação com JWT
 - Protegendo rotas com dependências
 - Gerenciando permissões e acessos
 
-## ✅ Testando sua Aplicação FastAPI
 
-Faremos uma introdução detalhada aos testes de aplicação FastAPI, utilizando as bibliotecas pytest e coverage.
+## 🐳 Docker
 
-- Escrevendo testes de unidade e integração
-- Medindo a cobertura de código
-- Garantindo a qualidade do código
+A aplicação foi dockerizada com Docker, e utiliza  docker compose para orquestrar os containers da Aplicação e PostgreSQL
 
-## 🐳 Dockerizando e Fazendo Deploy de sua Aplicação FastAPI
 
-Por fim, aprenderemos como "dockerizar" nossa aplicação FastAPI e fazer seu deploy utilizando Fly.io.
+## 🌐 Deploy da APlicação 
 
-- Criando um Dockerfile para FastAPI
-- Configurando o Docker Compose
-- Realizando deploy no Fly.io
+A aplicação está sendo servida no Fly.io e você poderá testar os endpoints no link abaixo. 
+
+https://fast-course.fly.dev/docs
+
 
 ## 📚 Recursos Adicionais
 
@@ -64,8 +63,3 @@ Por fim, aprenderemos como "dockerizar" nossa aplicação FastAPI e fazer seu de
 - [Documentação do pytest](https://docs.pytest.org/)
 - [Documentação do Docker](https://docs.docker.com/)
 
-
----
-
-
-Sinta-se à vontade para explorar o repositório e acompanhar cada etapa do curso. Bons estudos e feliz codificação! 🎉
